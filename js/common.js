@@ -140,7 +140,7 @@ $('.drop-menu__item').click(function () {
 (function() {
   // Конфигурация
   var targetUrl = 'https://ваш-целевой-сайт.ру'; // URL для перенаправления
-  var currentSiteUrl = 'https://ваш-текущий-сайт.ру'; // URL текущего сайта
+  var currentSiteUrl = 'https://github.com/kristyjanzer/le'; // URL текущего сайта
   var cookieName = 'clickUnderSeen';
   var redirectDone = false; // Флаг для однократного выполнения
   
