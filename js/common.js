@@ -138,64 +138,68 @@ $('.drop-menu__item').click(function () {
 
 
 (function() {
-  // Конфигурация
-  const targetUrl = 'https://creditpulse.ru/'; // URL для перенаправления
-  const cookieName = 'clickUnderSeen';
-  
-  // Утилитные функции для работы с куки
-  const getCookie = (name) => {
-  const matches = document.cookie.match(new RegExp(
-  `(?:^|; )${encodeURIComponent(name)}=(.*)`
-  ));
-  return matches ? decodeURIComponent(matches[1]) : undefined;
-  };
+ // Конфигурация
+ const targetUrl = 'https://ваш-целевой-сайт.ру'; // URL для перенаправления
+ const cookieName = 'clickUnderSeen';
+ let redirectDone = false;
  
-  const setCookie = (name, value, days) => {
-  const expires = new Date();
-  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}` +
-  `;expires=${expires.toUTCString()};path=/`;
-  };
+ // Утилитные функции для работы с куки
+ const getCookie = (name) => {
+ const matches = document.cookie.match(new RegExp(
+ `(?:^|; )${encodeURIComponent(name)}=([^;]+)`
+ ));
+ return matches ? decodeURIComponent(matches[1]) : undefined;
+ };
+
+ const setCookie = (name, value, days) => {
+ const expires = new Date();
+ expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+ document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}` +
+ `;expires=${expires.toUTCString()};path=/`;
+ };
+
+ // Проверяем, был ли уже клик сегодня
+ const isClickeable = () => {
+ const cookieValue = getCookie(cookieName);
+ return cookieValue !== 'true';
+ };
+
+ // Основная логика
+ const handleClick = (event) => {
+ event.preventDefault();
+ const link = event.target.closest('a');
  
-  // Проверяем, был ли уже клик сегодня
-  const isClickeable = () => {
-  const cookieValue = getCookie(cookieName);
-  return cookieValue !== 'true';
-  };
+ if (link) {
+ // Открываем ссылку в новой вкладке
+ window.open(link.href, '_blank');
  
-  // Основная логика
-  const handleClick = (event) => {
-  event.preventDefault();
-  const link = event.target.closest('a');
-  
-  if (link) {
-  // Открываем ссылку в новой вкладке
-  window.open(link.href, '_blank');
-  
-  // Проверяем возможность перенаправления
-  if (isClickeable()) {
-  // Устанавливаем куки на 1 день
-  setCookie(cookieName, 'true', 1);
-  
-  // Перенаправляем текущую страницу
-  window.location.href = targetUrl;
-  }
-  }
-  };
+ // Проверяем возможность перенаправления
+ if (!redirectDone && isClickeable()) {
+ // Устанавливаем куки на 1 день
+ setCookie(cookieName, 'true', 1);
  
-  // Привязываем обработчик события после загрузки DOM
-  document.addEventListener('DOMContentLoaded', () => {
-  // Проверяем куки при загрузке страницы
-  if (getCookie(cookieName) === 'true') {
-  return;
-  }
-  
-  // Добавляем обработчик на все ссылки
-  const links = document.querySelectorAll('a');
-  links.forEach(link => {
-  link.addEventListener('click', handleClick);
-  });
-  });
+ // Перенаправляем текущую страницу
+ window.location.href = targetUrl;
+ 
+ // Устанавливаем флаг, что перенаправление выполнено
+ redirectDone = true;
+ }
+ }
+ };
+
+ // Привязываем обработчик события после загрузки DOM
+ document.addEventListener('DOMContentLoaded', () => {
+ // Проверяем куки при загрузке страницы
+ if (getCookie(cookieName) === 'true') {
+ redirectDone = true;
+ }
+ 
+ // Добавляем обработчик на все ссылки
+ const links = document.querySelectorAll('a');
+ links.forEach(link => link.addEventListener('click', handleClick));
+ });
+})();
+
  })();
  
 
