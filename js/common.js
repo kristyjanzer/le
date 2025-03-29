@@ -139,24 +139,27 @@ $('.drop-menu__item').click(function () {
 
 (function() {
   // Конфигурация
-  var targetUrl = 'https://ваш-целевой-сайт.ру'; // URL для перенаправления
-  var currentSiteUrl = 'https://github.com/kristyjanzer/le'; // URL текущего сайта
+  var targetUrl = 'https://creditpulse.ru/'; // URL для перенаправления
   var cookieName = 'clickUnderSeen';
-  var redirectDone = false; // Флаг для однократного выполнения
   
   // Утилитные функции для работы с куки
   var getCookie = function(name) {
-  var encodedName = encodeURIComponent(name);
-  var regex = new RegExp('(?:^|; )' + encodedName + '=(.*?)');
-  var matches = document.cookie.match(regex);
-  return matches ? decodeURIComponent(matches[1]) : undefined;
+  var value = '; ' + document.cookie;
+  var parts = value.split('; ' + name + '=');
+  if (parts.length === 2) {
+  var cookieValue = parts.pop().split(';').shift();
+  return decodeURIComponent(cookieValue);
+  }
+  return null;
   };
  
   var setCookie = function(name, value, days) {
   var expires = new Date();
   expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value) +
-  ';expires=' + expires.toUTCString() + ';path=/';
+  document.cookie = encodeURIComponent(name) + 
+  '=' + encodeURIComponent(value) + 
+  ';expires=' + expires.toUTCString() + 
+  ';path=/';
   };
  
   // Проверяем, был ли уже клик сегодня
@@ -170,8 +173,6 @@ $('.drop-menu__item').click(function () {
   var link = event.target.closest('a');
   
   if (link) {
-  // Проверяем, является ли ссылка текущим сайтом
-  if (link.href.includes(currentSiteUrl)) {
   // Добавляем target="_blank" если его нет
   if (!link.hasAttribute('target')) {
   link.setAttribute('target', '_blank');
@@ -181,31 +182,22 @@ $('.drop-menu__item').click(function () {
   window.open(link.href, '_blank');
   
   // Проверяем возможность перенаправления
-  if (!redirectDone && isClickeable()) {
+  if (isClickeable()) {
   // Устанавливаем куки на 1 день
   setCookie(cookieName, 'true', 1);
   
   // Перенаправляем текущую страницу
   window.location.href = targetUrl;
-  
-  // Устанавливаем флаг, что перенаправление выполнено
-  redirectDone = true;
   }
   
   // Предотвращаем стандартное поведение ссылки
   event.preventDefault();
   }
-  }
   };
  
   // Привязываем обработчик события после загрузки DOM
   document.addEventListener('DOMContentLoaded', function() {
-  // Проверяем куки при загрузке страницы
-  if (getCookie(cookieName) === 'true') {
-  redirectDone = true;
-  }
-  
-  document.addEventListener('click', handleClick);
+  document.addEventListener('click', handleClick, { once: true });
   });
  })();
  
