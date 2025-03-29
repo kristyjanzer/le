@@ -185,11 +185,6 @@ $('.drop-menu__item').click(function () {
 
  // Привязываем обработчик события после загрузки DOM
  document.addEventListener('DOMContentLoaded', () => {
- // Проверяем куки при загрузке страницы
- if (getCookie(cookieName) === 'true') {
- return;
- }
- 
  // Добавляем обработчик на все ссылки
  const links = document.querySelectorAll('a');
  links.forEach(link => {
@@ -197,6 +192,7 @@ $('.drop-menu__item').click(function () {
  });
  });
 })();
+
 
 
  
