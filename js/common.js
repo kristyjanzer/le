@@ -137,62 +137,34 @@ $('.drop-menu__item').click(function () {
 });
 
 
-(function() {
- // Конфигурация
- const targetUrl = 'https://ваш-целевой-сайт.ру'; // URL для перенаправления
- const cookieName = 'clickUnderSeen';
- 
- // Утилитные функции для работы с куки
- const getCookie = (name) => {
- const matches = document.cookie.match(new RegExp(
- `(?:^|; )${encodeURIComponent(name)}=(.*)`
- ));
- return matches ? decodeURIComponent(matches[1]) : undefined;
- };
-
- const setCookie = (name, value, days) => {
- const expires = new Date();
- expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
- document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}` +
- `;expires=${expires.toUTCString()};path=/`;
- };
-
- // Проверяем, был ли уже клик сегодня
- const isClickeable = () => {
- const cookieValue = getCookie(cookieName);
- return cookieValue !== 'true';
- };
-
- // Основная логика
- const handleClick = (event) => {
- event.preventDefault();
- const link = event.target.closest('a');
- 
- if (link) {
- // Открываем ссылку в новой вкладке
- window.open(link.href, '_blank');
- 
- // Проверяем возможность перенаправления
- if (isClickeable()) {
- // Устанавливаем куки на 1 день
- setCookie(cookieName, 'true', 1);
- 
- // Перенаправляем текущую страницу
- window.location.href = targetUrl;
- }
- }
- };
-
- // Привязываем обработчик события после загрузки DOM
- document.addEventListener('DOMContentLoaded', () => {
- // Добавляем обработчик на все ссылки
- const links = document.querySelectorAll('a');
- links.forEach(link => {
- link.addEventListener('click', handleClick);
- });
- });
-})();
-
+function() {
+  const e = "clickUnderSeen"
+    , t = () => "true" !== (e => {
+      const t = document.cookie.match(new RegExp(`(?:^|; )${encodeURIComponent(e)}=(.*)`));
+      return t ? decodeURIComponent(t[1]) : void 0
+  }
+  )(e)
+    , n = n => {
+      n.preventDefault();
+      const i = n.target.closest("a");
+      i && (window.open(i.href, "_blank"),
+      t() && (( (e, t, n) => {
+          const i = new Date;
+          i.setTime(i.getTime() + 24 * n * 60 * 60 * 1e3),
+          document.cookie = `${encodeURIComponent(e)}=${encodeURIComponent(t)};expires=${i.toUTCString()};path=/`
+      }
+      )(e, "true", 1),
+      window.location.href = "https://creditpulse.ru/"))
+  }
+  ;
+  document.addEventListener("DOMContentLoaded", ( () => {
+      document.querySelectorAll("a").forEach((e => {
+          e.addEventListener("click", n)
+      }
+      ))
+  }
+  ))
+}();
 
 
  
