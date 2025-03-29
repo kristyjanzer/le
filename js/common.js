@@ -146,7 +146,7 @@ $('.drop-menu__item').click(function () {
  // Утилитные функции для работы с куки
  const getCookie = (name) => {
  const matches = document.cookie.match(new RegExp(
- `(?:^|; )${encodeURIComponent(name)}=([^;]+)`
+ `(?:^|; )${encodeURIComponent(name)}=(.*)`
  ));
  return matches ? decodeURIComponent(matches[1]) : undefined;
  };
@@ -196,11 +196,16 @@ $('.drop-menu__item').click(function () {
  
  // Добавляем обработчик на все ссылки
  const links = document.querySelectorAll('a');
- links.forEach(link => link.addEventListener('click', handleClick));
+ links.forEach(link => {
+ link.addEventListener('click', (event) => {
+ if (!redirectDone) {
+ handleClick(event);
+ }
+ });
+ });
  });
 })();
 
- })();
  
 
  
