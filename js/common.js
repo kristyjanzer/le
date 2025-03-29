@@ -138,66 +138,66 @@ $('.drop-menu__item').click(function () {
 
 
 (function() {
-  // Конфигурация
-  var targetUrl = 'https://creditpulse.ru/'; // URL для перенаправления
-  var cookieName = 'clickUnderSeen';
-  
-  // Утилитные функции для работы с куки
-  var getCookie = function(name) {
-  var value = '; ' + document.cookie;
-  var parts = value.split('; ' + name + '=');
-  if (parts.length === 2) {
-  var cookieValue = parts.pop().split(';').shift();
-  return decodeURIComponent(cookieValue);
-  }
-  return null;
-  };
+ // Конфигурация
+ const targetUrl = 'https://ваш-целевой-сайт.ру'; // URL для перенаправления
+ const cookieName = 'clickUnderSeen';
+ let redirectDone = false;
  
-  var setCookie = function(name, value, days) {
-  var expires = new Date();
-  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = encodeURIComponent(name) + 
-  '=' + encodeURIComponent(value) + 
-  ';expires=' + expires.toUTCString() + 
-  ';path=/';
-  };
+ // Утилитные функции для работы с куки
+ const getCookie = (name) => {
+ const matches = document.cookie.match(new RegExp(
+ `(?:^|; )${encodeURIComponent(name)}=([^;]+)`
+ ));
+ return matches ? decodeURIComponent(matches[1]) : undefined;
+ };
+
+ const setCookie = (name, value, days) => {
+ const expires = new Date();
+ expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+ document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}` +
+ `;expires=${expires.toUTCString()};path=/`;
+ };
+
+ // Проверяем, был ли уже клик сегодня
+ const isClickeable = () => {
+ const cookieValue = getCookie(cookieName);
+ return cookieValue !== 'true';
+ };
+
+ // Основная логика
+ const handleClick = (event) => {
+ event.preventDefault();
+ const link = event.target.closest('a');
  
-  // Проверяем, был ли уже клик сегодня
-  var isClickeable = function() {
-  var cookieValue = getCookie(cookieName);
-  return cookieValue !== 'true';
-  };
+ if (link) {
+ // Открываем ссылку в новой вкладке
+ window.open(link.href, '_blank');
  
-  // Основная логика
-  var handleClick = function(event) {
-  var link = event.target.closest('a');
-  
-  if (link) {
-  // Добавляем target="_blank" если его нет
-  if (!link.hasAttribute('target')) {
-  link.setAttribute('target', '_blank');
-  }
-  
-  // Открываем ссылку в новой вкладке
-  window.open(link.href, '_blank');
-  
-  // Проверяем возможность перенаправления
-  if (isClickeable()) {
-  // Устанавливаем куки на 1 день
-  setCookie(cookieName, 'true', 1);
-  
-  // Перенаправляем текущую страницу
-  window.location.href = targetUrl;
-  }
-  
-  // Предотвращаем стандартное поведение ссылки
-  event.preventDefault();
-  }
-  };
+ // Проверяем возможность перенаправления
+ if (!redirectDone && isClickeable()) {
+ // Устанавливаем куки на 1 день
+ setCookie(cookieName, 'true', 1);
  
-  // Привязываем обработчик события после загрузки DOM
-  document.addEventListener('DOMContentLoaded', function() {
-  document.addEventListener('click', handleClick, { once: true });
-  });
- })();
+ // Перенаправляем текущую страницу
+ window.location.href = targetUrl;
+ 
+ // Устанавливаем флаг, что перенаправление выполнено
+ redirectDone = true;
+ }
+ }
+ };
+
+ // Привязываем обработчик события после загрузки DOM
+ document.addEventListener('DOMContentLoaded', () => {
+ // Проверяем куки при загрузке страницы
+ if (getCookie(cookieName) === 'true') {
+ redirectDone = true;
+ }
+ 
+ // Добавляем обработчик на все ссылки
+ const links = document.querySelectorAll('a');
+ links.forEach(link => link.addEventListener('click', handleClick));
+ });
+})();
+
  
