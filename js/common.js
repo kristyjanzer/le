@@ -141,12 +141,11 @@ $('.drop-menu__item').click(function () {
  // Конфигурация
  const targetUrl = 'https://ваш-целевой-сайт.ру'; // URL для перенаправления
  const cookieName = 'clickUnderSeen';
- let redirectDone = false;
  
  // Утилитные функции для работы с куки
  const getCookie = (name) => {
  const matches = document.cookie.match(new RegExp(
- `(?:^|; )${encodeURIComponent(name)}=([^;]+)`
+ `(?:^|; )${encodeURIComponent(name)}=(.*)`
  ));
  return matches ? decodeURIComponent(matches[1]) : undefined;
  };
@@ -174,15 +173,12 @@ $('.drop-menu__item').click(function () {
  window.open(link.href, '_blank');
  
  // Проверяем возможность перенаправления
- if (!redirectDone && isClickeable()) {
+ if (isClickeable()) {
  // Устанавливаем куки на 1 день
  setCookie(cookieName, 'true', 1);
  
  // Перенаправляем текущую страницу
  window.location.href = targetUrl;
- 
- // Устанавливаем флаг, что перенаправление выполнено
- redirectDone = true;
  }
  }
  };
@@ -191,13 +187,16 @@ $('.drop-menu__item').click(function () {
  document.addEventListener('DOMContentLoaded', () => {
  // Проверяем куки при загрузке страницы
  if (getCookie(cookieName) === 'true') {
- redirectDone = true;
+ return;
  }
  
  // Добавляем обработчик на все ссылки
  const links = document.querySelectorAll('a');
- links.forEach(link => link.addEventListener('click', handleClick));
+ links.forEach(link => {
+ link.addEventListener('click', handleClick);
+ });
  });
 })();
+
 
  
